@@ -150,3 +150,42 @@ auto sun::get_sun_times2(double latitude, double longitude, date::sys_days date)
             get_sun_time(lat, lon, date, SunTime::AstroDusk),
     };
 }
+
+auto sun::get_sun_times3(double latitude, double longitude, date::sys_days date) -> sun_times {
+    auto lat = Angle::from_deg(latitude);
+    auto lon = Angle::from_deg(longitude);
+
+    // The requested midnight UTC time point in julian days. This is the mathematical baseline for all the
+    // hour angles we will calculate. We have to cast to seconds first to keep the midnight part.
+    constexpr auto start_of_julian_century = julian_days{2451545.0};
+    const auto j_day = julian_day(julian_date::sys_to_julian(sys_seconds(date))) - start_of_julian_century;
+
+    sun_times res{};
+
+    auto a_noon = time_of_solar_noon(j_day, lon);
+    auto j_noon = j_day + a_noon;
+    auto t_noon = date + a_noon;
+
+    res.noon = floor<seconds>(t_noon);
+    res.midnight = floor<seconds>(t_noon + julian_days(0.5));
+
+    auto get_time = [&](SunTime type) -> optional<sys_seconds> {
+        auto angle = time_of_solar_elevation(j_noon, lat, lon, time_angle(type));
+        if (!std::isnan(angle.count())) {
+            return floor<seconds>(date + angle);
+        } else {
+            return std::nullopt;
+        }
+    };
+
+    res.astro_dawn = get_time(SunTime::AstroDawn);
+    res.naut_dawn = get_time(SunTime::NautDawn);
+    res.civil_dawn = get_time(SunTime::CivilDawn);
+    res.sunrise = get_time(SunTime::Sunrise);
+    res.sunset = get_time(SunTime::Sunset);
+    res.civil_dusk = get_time(SunTime::CivilDusk);
+    res.naut_dusk = get_time(SunTime::NautDusk);
+    res.astro_dusk = get_time(SunTime::AstroDusk);
+
+    return res;
+}

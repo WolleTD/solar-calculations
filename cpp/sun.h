@@ -40,5 +40,6 @@ struct sun_times {
 
 sun_times get_sun_times(double latitude, double longitude, date::sys_days date);
 sun_times get_sun_times2(double latitude, double longitude, date::sys_days date);
+sun_times get_sun_times3(double latitude, double longitude, date::sys_days date);
 sun_times get_sun_times_c(double latitude, double longitude, date::sys_days date);
 }// namespace sun
