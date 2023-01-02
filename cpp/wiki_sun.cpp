@@ -118,7 +118,7 @@ static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, sys_d
     }
 }
 
-auto sun::get_sun_times(double latitude, double longitude, date::sys_days date) -> sun_times {
+auto sun::get_sun_times_wiki(double latitude, double longitude, date::sys_days date) -> sun_times {
     auto lat = Angle::from_deg(latitude);
     auto lon = Angle::from_deg(longitude);
     return {

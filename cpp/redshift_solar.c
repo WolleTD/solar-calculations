@@ -27,7 +27,7 @@
 
 #include <math.h>
 
-#include "solar.h"
+#include "redshift_solar.h"
 #include "time.h"
 
 #define RAD(x)  ((x)*(M_PI/180))

@@ -16,7 +16,7 @@ static void BM_sun_times_wiki(benchmark::State &state) {
     auto tp = floor<days>(system_clock::now());
     for (auto _: state) {
         // This code gets timed
-        sun::get_sun_times(lat, lon, tp);
+        sun::get_sun_times_wiki(lat, lon, tp);
     }
 }
 // Register the function as a benchmark
@@ -38,7 +38,7 @@ static void BM_sun_times_noaa(benchmark::State &state) {
     auto tp = floor<days>(system_clock::now());
     for (auto _: state) {
         // This code gets timed
-        sun::get_sun_times2(lat, lon, tp);
+        sun::get_sun_times_noaa(lat, lon, tp);
     }
 }
 // Register the function as a benchmark
@@ -49,7 +49,7 @@ static void BM_sun_times_noaa_opt(benchmark::State &state) {
     auto tp = floor<days>(system_clock::now());
     for (auto _: state) {
         // This code gets timed
-        sun::get_sun_times3(lat, lon, tp);
+        sun::get_sun_times_noaa_opt(lat, lon, tp);
     }
 }
 // Register the function as a benchmark

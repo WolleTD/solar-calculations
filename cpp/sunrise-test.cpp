@@ -64,7 +64,7 @@ int main() {
             auto offset = (date.get_info().offset > 12h) ? date.get_info().offset - 24h : date.get_info().offset;
             auto utc_date = floor<days>(date.get_sys_time() + offset);
 
-            auto times = sun::get_sun_times2(lat, lon, utc_date);
+            auto times = sun::get_sun_times_noaa(lat, lon, utc_date);
             auto times2 = sun::get_sun_times_rust(lat, lon, utc_date);
 
             auto map_zone = [&loc](optional<sys_seconds> tp) -> optional<zoned_seconds> {
@@ -92,7 +92,7 @@ int main() {
     auto date = date::zoned_time(date::current_zone(), floor<seconds>(system_clock::now()));
     auto utc_date = floor<days>(date.get_sys_time());
 
-    auto times = sun::get_sun_times2(lat, lon, utc_date);
+    auto times = sun::get_sun_times_noaa(lat, lon, utc_date);
     auto times2 = sun::get_sun_times_rust(lat, lon, utc_date);
 
     auto map_zone = [](optional<sys_seconds> tp) -> optional<zoned_seconds> {

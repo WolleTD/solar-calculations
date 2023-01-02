@@ -4,7 +4,7 @@
 #include "sun.h"
 
 extern "C" {
-#include "solar.h"
+#include "redshift_solar.h"
 }
 
 using date::sys_seconds;

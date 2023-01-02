@@ -3,8 +3,8 @@
 
 #include "angle.h"
 #include "julian_date.h"
+#include "rust_sun_ffi.h"
 #include "sun.h"
-#include "sun_ffi.h"
 
 using date::sys_days;
 using date::sys_seconds;
@@ -135,7 +135,7 @@ static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, const
     }
 }
 
-auto sun::get_sun_times2(double latitude, double longitude, date::sys_days date) -> sun_times {
+auto sun::get_sun_times_noaa(double latitude, double longitude, date::sys_days date) -> sun_times {
     auto lat = Angle::from_deg(latitude);
     auto lon = Angle::from_deg(longitude);
     return {
@@ -152,7 +152,7 @@ auto sun::get_sun_times2(double latitude, double longitude, date::sys_days date)
     };
 }
 
-auto sun::get_sun_times3(double latitude, double longitude, date::sys_days date) -> sun_times {
+auto sun::get_sun_times_noaa_opt(double latitude, double longitude, date::sys_days date) -> sun_times {
     auto lat = Angle::from_deg(latitude);
     auto lon = Angle::from_deg(longitude);
 

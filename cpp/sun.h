@@ -38,9 +38,9 @@ struct sun_times {
     std::optional<date::sys_seconds> astro_dusk;
 };
 
-sun_times get_sun_times(double latitude, double longitude, date::sys_days date);
-sun_times get_sun_times2(double latitude, double longitude, date::sys_days date);
-sun_times get_sun_times3(double latitude, double longitude, date::sys_days date);
+sun_times get_sun_times_wiki(double latitude, double longitude, date::sys_days date);
+sun_times get_sun_times_noaa(double latitude, double longitude, date::sys_days date);
+sun_times get_sun_times_noaa_opt(double latitude, double longitude, date::sys_days date);
 sun_times get_sun_times_c(double latitude, double longitude, date::sys_days date);
 sun_times get_sun_times_rust(double latitude, double longitude, date::sys_days date);
 }// namespace sun
