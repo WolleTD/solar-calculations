@@ -11,3 +11,6 @@ add_library(solar cpp/solar.c cpp/solar.cpp)
 
 add_executable(sunrise-test cpp/sunrise-test.cpp)
 target_link_libraries(sunrise-test PRIVATE sun solar)
+
+add_executable(bench cpp/bench.cpp)
+target_link_libraries(bench PRIVATE sun solar benchmark)
