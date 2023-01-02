@@ -258,7 +258,7 @@ time_of_solar_elevation(double t, double t_noon,
 	double sol_offset = 720 - 4*(lon + DEG(ha)) - eq_time;
 
 	/* Recalculate using new sunrise. */
-	double t_rise = jcent_from_jd(jd_from_jcent(t) + sol_offset/1440.0);
+	double t_rise = jcent_from_jd(jd_from_jcent(t) - 0.5 + sol_offset/1440.0);
 	eq_time = equation_of_time(t_rise);
 	sol_decl = solar_declination(t_rise);
 	ha = hour_angle_from_elevation(lat, sol_decl, elev);
