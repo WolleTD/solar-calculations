@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2022 Eicke Herbertz
+// SPDX-FileCopyrightText: 2022-2023 Eicke Herbertz
 
 #include "sun.h"
 #include "angle.h"

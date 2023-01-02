@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// SPDX-FileCopyrightText: 2022 Eicke Herbertz
+// SPDX-FileCopyrightText: 2022-2023 Eicke Herbertz
 
 #include "sun.h"
 #include <benchmark/benchmark.h>
