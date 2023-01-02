@@ -4,6 +4,7 @@
 #include "angle.h"
 #include "julian_date.h"
 #include "sun.h"
+#include "sun_ffi.h"
 
 using date::sys_days;
 using date::sys_seconds;
@@ -188,4 +189,26 @@ auto sun::get_sun_times3(double latitude, double longitude, date::sys_days date)
     res.astro_dusk = get_time(SunTime::AstroDusk);
 
     return res;
+}
+
+auto sun::get_sun_times_rust(double latitude, double longitude, date::sys_days date) -> sun_times {
+    auto tp = sys_seconds(date).time_since_epoch().count();
+    auto res = get_sun_times_r(latitude, longitude, tp);
+    auto map = [](int64_t tp) -> optional<sys_seconds> {
+        if (tp) return sys_seconds(seconds(tp));
+        else
+            return std::nullopt;
+    };
+    return {
+            sys_seconds(seconds(res.noon)),
+            sys_seconds(seconds(res.midnight)),
+            map(res.astro_dawn),
+            map(res.naut_dawn),
+            map(res.civil_dawn),
+            map(res.sunrise),
+            map(res.sunset),
+            map(res.civil_dusk),
+            map(res.naut_dusk),
+            map(res.astro_dusk),
+    };
 }

@@ -65,7 +65,7 @@ int main() {
             auto utc_date = floor<days>(date.get_sys_time() + offset);
 
             auto times = sun::get_sun_times2(lat, lon, utc_date);
-            auto times2 = sun::get_sun_times_c(lat, lon, utc_date);
+            auto times2 = sun::get_sun_times_rust(lat, lon, utc_date);
 
             auto map_zone = [&loc](optional<sys_seconds> tp) -> optional<zoned_seconds> {
                 if (tp.has_value()) return zoned_seconds(loc.zone, tp.value());
@@ -93,7 +93,7 @@ int main() {
     auto utc_date = floor<days>(date.get_sys_time());
 
     auto times = sun::get_sun_times2(lat, lon, utc_date);
-    auto times2 = sun::get_sun_times_c(lat, lon, utc_date);
+    auto times2 = sun::get_sun_times_rust(lat, lon, utc_date);
 
     auto map_zone = [](optional<sys_seconds> tp) -> optional<zoned_seconds> {
         if (tp.has_value()) return zoned_seconds(date::current_zone(), tp.value());

@@ -55,5 +55,16 @@ static void BM_sun_times_noaa_opt(benchmark::State &state) {
 // Register the function as a benchmark
 BENCHMARK(BM_sun_times_noaa_opt);
 
+static void BM_sun_times_rust(benchmark::State &state) {
+    // Perform setup here
+    auto tp = floor<days>(system_clock::now());
+    for (auto _: state) {
+        // This code gets timed
+        sun::get_sun_times_rust(lat, lon, tp);
+    }
+}
+// Register the function as a benchmark
+BENCHMARK(BM_sun_times_rust);
+
 // Run the benchmark
 BENCHMARK_MAIN();
