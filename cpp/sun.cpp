@@ -21,7 +21,7 @@ static constexpr auto nautTwilightElev = -12.0;
 static constexpr auto civilTwilightElev = -6.0;
 static constexpr auto daytimeElev = -0.833;
 
-static Angle time_angle(SunTime time_type) {
+Angle sun::time_angle(SunTime time_type) {
     switch (time_type) {
         case SunTime::AstroDawn:
             return Angle::from_deg(-90.0 + astroTwilightElev);

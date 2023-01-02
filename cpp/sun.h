@@ -6,6 +6,8 @@
 #include <chrono>
 #include <optional>
 
+struct Angle;
+
 namespace sun {
 
 enum class SunTime {
@@ -21,6 +23,8 @@ enum class SunTime {
     AstroDusk,
 };
 
+Angle time_angle(SunTime time_type);
+
 struct sun_times {
     date::sys_seconds noon;
     date::sys_seconds midnight;
@@ -35,5 +39,6 @@ struct sun_times {
 };
 
 sun_times get_sun_times(double latitude, double longitude, date::sys_days date);
+sun_times get_sun_times2(double latitude, double longitude, date::sys_days date);
 sun_times get_sun_times_c(double latitude, double longitude, date::sys_days date);
 }// namespace sun

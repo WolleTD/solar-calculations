@@ -4,7 +4,7 @@ project(solar-calculations)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(sun cpp/sun.cpp)
+add_library(sun cpp/sun.cpp cpp/sun2.cpp)
 target_link_libraries(sun PUBLIC date-tz fmt)
 
 add_library(solar cpp/solar.c cpp/solar.cpp)

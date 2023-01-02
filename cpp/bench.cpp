@@ -33,5 +33,16 @@ static void BM_sun_times_c(benchmark::State &state) {
 // Register the function as a benchmark
 BENCHMARK(BM_sun_times_c);
 
+static void BM_sun_times_noaa(benchmark::State &state) {
+    // Perform setup here
+    auto tp = floor<days>(system_clock::now());
+    for (auto _: state) {
+        // This code gets timed
+        sun::get_sun_times2(lat, lon, tp);
+    }
+}
+// Register the function as a benchmark
+BENCHMARK(BM_sun_times_noaa);
+
 // Run the benchmark
 BENCHMARK_MAIN();
