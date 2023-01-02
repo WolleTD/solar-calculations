@@ -17,8 +17,9 @@ This repository contains four implementations of sunrise calculations.
 - `src/lib.rs`: this is my implementation, but ported to Rust. Just to compare it to C++ and do
   some FFI hacking.
 
-You need [`libfmt`](https://github.com/fmtlib/fmt) and [`libbenchmark`](https://github.com/google/benchmark)
-installed on your system.
+You need [`date`](https://github.com/HowardHinnant/date) for the library until we have C++20 chrono.
+For the benchmark and test code, you'll also need [`fmt`](https://github.com/fmtlib/fmt) and
+[`benchmark`](https://github.com/google/benchmark) installed on your system.
 
 I wrote these implementations for the fun of doing it. And maybe for the fun of building products
 with stupidly precise astronomic calculations. _I know we'll probably never sell to the Arctic, but
