@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2022-2023 Eicke Herbertz
 
-#include "date/date.h"
-#include "date/tz.h"
+#include "angle.h"
 #include <chrono>
+#include <date/date.h>
 #include <optional>
-
-struct Angle;
 
 namespace sun {
 
@@ -23,7 +21,33 @@ enum class SunTime {
     AstroDusk,
 };
 
-Angle time_angle(SunTime time_type);
+static constexpr auto astroTwilightElev = -18.0;
+static constexpr auto nautTwilightElev = -12.0;
+static constexpr auto civilTwilightElev = -6.0;
+static constexpr auto daytimeElev = -0.833;
+
+inline Angle time_angle(SunTime time_type) {
+    switch (time_type) {
+        case SunTime::AstroDawn:
+            return Angle::from_deg(-90.0 + astroTwilightElev);
+        case SunTime::NautDawn:
+            return Angle::from_deg(-90.0 + nautTwilightElev);
+        case SunTime::CivilDawn:
+            return Angle::from_deg(-90.0 + civilTwilightElev);
+        case SunTime::Sunrise:
+            return Angle::from_deg(-90.0 + daytimeElev);
+        case SunTime::Sunset:
+            return Angle::from_deg(90.0 - daytimeElev);
+        case SunTime::CivilDusk:
+            return Angle::from_deg(90.0 - civilTwilightElev);
+        case SunTime::NautDusk:
+            return Angle::from_deg(90.0 - nautTwilightElev);
+        case SunTime::AstroDusk:
+            return Angle::from_deg(90.0 - astroTwilightElev);
+        default:
+            throw std::invalid_argument("Invalid SunTime");
+    }
+}
 
 struct sun_times {
     date::sys_seconds noon;

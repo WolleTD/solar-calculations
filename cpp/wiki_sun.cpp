@@ -16,34 +16,6 @@ using std::chrono::floor;
 using std::chrono::seconds;
 using sun::SunTime;
 
-static constexpr auto astroTwilightElev = -18.0;
-static constexpr auto nautTwilightElev = -12.0;
-static constexpr auto civilTwilightElev = -6.0;
-static constexpr auto daytimeElev = -0.833;
-
-Angle sun::time_angle(SunTime time_type) {
-    switch (time_type) {
-        case SunTime::AstroDawn:
-            return Angle::from_deg(-90.0 + astroTwilightElev);
-        case SunTime::NautDawn:
-            return Angle::from_deg(-90.0 + nautTwilightElev);
-        case SunTime::CivilDawn:
-            return Angle::from_deg(-90.0 + civilTwilightElev);
-        case SunTime::Sunrise:
-            return Angle::from_deg(-90.0 + daytimeElev);
-        case SunTime::Sunset:
-            return Angle::from_deg(90.0 - daytimeElev);
-        case SunTime::CivilDusk:
-            return Angle::from_deg(90.0 - civilTwilightElev);
-        case SunTime::NautDusk:
-            return Angle::from_deg(90.0 - nautTwilightElev);
-        case SunTime::AstroDusk:
-            return Angle::from_deg(90.0 - astroTwilightElev);
-        default:
-            throw std::invalid_argument("Invalid SunTime");
-    }
-}
-
 // This is basically a step-by-step implementation of the calculations described in this Wikipedia article:
 // https://en.wikipedia.org/wiki/Sunrise_equation#Complete_calculation_on_Earth
 
