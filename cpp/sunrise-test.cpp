@@ -36,7 +36,7 @@ int main() {
             {-78.463889, 106.83757, "Antarctica/Vostok"},// +0600
     };
 
-    auto print_time = [](auto str, optional<zoned_seconds> time, optional<zoned_seconds> rs_time) {
+    auto print_time = [](auto str, optional<zoned_seconds> time, optional<zoned_seconds> rs_time, Angle elev) {
         std::string my_str;
         std::string rs_str;
         if (time) {
@@ -49,7 +49,7 @@ int main() {
         } else {
             rs_str = "       does not happen        ";
         }
-        fmt::print("{}: {} | {} UTC\n", str, my_str, rs_str);
+        fmt::print("{}: {} | {} | elev: {:.2f}\n", str, my_str, rs_str, elev.deg());
     };
 
     for (auto loc: locations) {
@@ -73,17 +73,25 @@ int main() {
                     return std::nullopt;
             };
 
+            auto get_elev = [&](optional<sys_seconds> tp) -> Angle {
+                if (tp.has_value()) {
+                    return sun::noaa::get_sun_elevation(lat, lon, tp.value());
+                } else {
+                    return Angle::from_deg(0);
+                }
+            };
+
             fmt::print("==== check at {} ====\n", date::format("%c %z", date));
-            print_time(" a. dawn", map_zone(times.astro_dawn), map_zone(times2.astro_dawn));
-            print_time(" n. dawn", map_zone(times.naut_dawn), map_zone(times2.naut_dawn));
-            print_time(" c. dawn", map_zone(times.civil_dawn), map_zone(times2.civil_dawn));
-            print_time(" sunrise", map_zone(times.sunrise), map_zone(times2.sunrise));
-            print_time("    noon", map_zone(times.noon), map_zone(times2.noon));
-            print_time("  sunset", map_zone(times.sunset), map_zone(times2.sunset));
-            print_time(" c. dusk", map_zone(times.civil_dusk), map_zone(times2.civil_dusk));
-            print_time(" n. dusk", map_zone(times.naut_dusk), map_zone(times2.naut_dusk));
-            print_time(" a. dusk", map_zone(times.astro_dusk), map_zone(times2.astro_dusk));
-            print_time("midnight", map_zone(times.midnight), map_zone(times2.midnight));
+            print_time(" a. dawn", map_zone(times.astro_dawn), map_zone(times2.astro_dawn), get_elev(times.astro_dawn));
+            print_time(" n. dawn", map_zone(times.naut_dawn), map_zone(times2.naut_dawn), get_elev(times.naut_dawn));
+            print_time(" c. dawn", map_zone(times.civil_dawn), map_zone(times2.civil_dawn), get_elev(times.civil_dawn));
+            print_time(" sunrise", map_zone(times.sunrise), map_zone(times2.sunrise), get_elev(times.sunrise));
+            print_time("    noon", map_zone(times.noon), map_zone(times2.noon), get_elev(times.noon));
+            print_time("  sunset", map_zone(times.sunset), map_zone(times2.sunset), get_elev(times.sunset));
+            print_time(" c. dusk", map_zone(times.civil_dusk), map_zone(times2.civil_dusk), get_elev(times.civil_dusk));
+            print_time(" n. dusk", map_zone(times.naut_dusk), map_zone(times2.naut_dusk), get_elev(times.naut_dusk));
+            print_time(" a. dusk", map_zone(times.astro_dusk), map_zone(times2.astro_dusk), get_elev(times.astro_dusk));
+            print_time("midnight", map_zone(times.midnight), map_zone(times2.midnight), get_elev(times.midnight));
         }
     }
 
@@ -101,16 +109,24 @@ int main() {
             return std::nullopt;
     };
 
+    auto get_elev = [&](optional<sys_seconds> tp) -> Angle {
+        if (tp.has_value()) {
+            return sun::noaa::get_sun_elevation(lat, lon, tp.value());
+        } else {
+            return Angle::from_deg(0);
+        }
+    };
+
     fmt::print("Bielefeld, today\n");
     fmt::print("==== check at {} ====\n", date::format("%c %z", date));
-    print_time(" a. dawn", map_zone(times.astro_dawn), map_zone(times2.astro_dawn));
-    print_time(" n. dawn", map_zone(times.naut_dawn), map_zone(times2.naut_dawn));
-    print_time(" c. dawn", map_zone(times.civil_dawn), map_zone(times2.civil_dawn));
-    print_time(" sunrise", map_zone(times.sunrise), map_zone(times2.sunrise));
-    print_time("    noon", map_zone(times.noon), map_zone(times2.noon));
-    print_time("  sunset", map_zone(times.sunset), map_zone(times2.sunset));
-    print_time(" c. dusk", map_zone(times.civil_dusk), map_zone(times2.civil_dusk));
-    print_time(" n. dusk", map_zone(times.naut_dusk), map_zone(times2.naut_dusk));
-    print_time(" a. dusk", map_zone(times.astro_dusk), map_zone(times2.astro_dusk));
-    print_time("midnight", map_zone(times.midnight), map_zone(times2.midnight));
+    print_time(" a. dawn", map_zone(times.astro_dawn), map_zone(times2.astro_dawn), get_elev(times.astro_dawn));
+    print_time(" n. dawn", map_zone(times.naut_dawn), map_zone(times2.naut_dawn), get_elev(times.naut_dawn));
+    print_time(" c. dawn", map_zone(times.civil_dawn), map_zone(times2.civil_dawn), get_elev(times.civil_dawn));
+    print_time(" sunrise", map_zone(times.sunrise), map_zone(times2.sunrise), get_elev(times.sunrise));
+    print_time("    noon", map_zone(times.noon), map_zone(times2.noon), get_elev(times.noon));
+    print_time("  sunset", map_zone(times.sunset), map_zone(times2.sunset), get_elev(times.sunset));
+    print_time(" c. dusk", map_zone(times.civil_dusk), map_zone(times2.civil_dusk), get_elev(times.civil_dusk));
+    print_time(" n. dusk", map_zone(times.naut_dusk), map_zone(times2.naut_dusk), get_elev(times.naut_dusk));
+    print_time(" a. dusk", map_zone(times.astro_dusk), map_zone(times2.astro_dusk), get_elev(times.astro_dusk));
+    print_time("midnight", map_zone(times.midnight), map_zone(times2.midnight), get_elev(times.midnight));
 }

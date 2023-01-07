@@ -42,18 +42,46 @@ struct sun_times {
 };
 
 namespace wiki {
+    // Returns the time of solar elevation at a given location and date, or nullopt if that elevation
+    // isn't reached there and then. You can use the predefined angles from the SunTimes namespace for
+    // the usual twilight angles. This variant may return an event that doesn't actually happen in
+    // polar circles (e.g. a last sunset right before the polar day).
     std::optional<date::sys_seconds> get_sun_time(Angle latitude, Angle longitude, date::sys_days date,
                                                   Angle sun_elevation);
+
+    // Returns a filled sun_times struct with all twilight elevation times at a given location and date.
+    // Events that don't occur are nullopt. This variant may return an event that doesn't actually happen
+    // in polar circles (e.g. a last sunset right before the polar day).
     sun_times get_sun_times(Angle latitude, Angle longitude, date::sys_days date);
 }// namespace wiki
 
 namespace noaa {
+    // Returns the solar elevation at a given location and time. This is the reverse function of get_sun_time.
+    // It has the huge benefit of always returning a value and is useful for applications like dimmers, that really
+    // want to depend on this rather than any concrete elevation angles. Redshift also works like this.
+    Angle get_sun_elevation(Angle latitude, Angle longitude, date::sys_seconds time_point);
+
+    // Returns the time of solar elevation at a given location and date, or nullopt if that elevation
+    // isn't reached there and then. You can use the predefined angles from the SunTimes namespace for
+    // the usual twilight angles. This variant seems to be reliable even for polar regions.
     std::optional<date::sys_seconds> get_sun_time(Angle latitude, Angle longitude, date::sys_days date,
                                                   Angle sun_elevation);
+
+    // Returns a filled sun_times struct with all twilight elevation times at a given location and date.
+    // Events that don't occur are nullopt. This variant seems to be reliable even for polar regions.
     sun_times get_sun_times(Angle latitude, Angle longitude, date::sys_days date);
+
+    // Returns a filled sun_times struct with all twilight elevation times at a given location and date.
+    // Events that don't occur are nullopt. Differs from get_sun_times only in being optimized to reuse
+    // some calculations and run slightly faster.
     sun_times get_sun_times_opt(Angle latitude, Angle longitude, date::sys_days date);
 }// namespace noaa
 
+// Returns a filled sun_times struct with all twilight elevation times at a given location and date.
+// Events that don't occur are nullopt. This variant calls the solar code from redshift.
 sun_times get_sun_times_c(Angle latitude, Angle longitude, date::sys_days date);
+
+// Returns a filled sun_times struct with all twilight elevation times at a given location and date.
+// Events that don't occur are nullopt. This variant calls the NOAA rust implementation.
 sun_times get_sun_times_rust(Angle latitude, Angle longitude, date::sys_days date);
 }// namespace sun

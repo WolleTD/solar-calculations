@@ -11,6 +11,8 @@ struct Angle {
     static constexpr Angle from_rad(double rad) { return Angle(rad); }
     static constexpr Angle from_deg(double deg) { return Angle(deg * (M_PI / 180.0)); }
 
+    explicit constexpr Angle(julian_date::julian_days j_days) : value(j_days.count() * (2 * M_PI)) {}
+
     explicit operator julian_date::julian_days() const { return julian_date::julian_days{value / (2 * M_PI)}; }
 
 private:

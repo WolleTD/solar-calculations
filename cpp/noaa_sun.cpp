@@ -84,6 +84,12 @@ Angle hour_angle(julian_century tp, Angle latitude, Angle elevation) {
     return Angle::from_rad(copysign(omega, elevation.rad()));
 }
 
+Angle elevation_from_hour_angle(julian_century tp, Angle latitude, Angle hour_angle) {
+    auto decli = sun_declination(tp);
+    auto elev = acos(cos(hour_angle) * cos(latitude) * cos(decli) + sin(latitude) * sin(decli));
+    return Angle::from_rad(elev);
+}
+
 static constexpr auto Noon = Angle::from_deg(180);
 
 julian_days time_of_solar_noon(julian_century day, Angle longitude) {
@@ -110,6 +116,18 @@ julian_days time_of_solar_elevation(julian_century noon, Angle latitude, Angle l
     auto eq_of_time = equation_of_time(tp);
     angle = hour_angle(tp, latitude, elevation);
     return julian_days{Noon - longitude - eq_of_time + angle};
+}
+
+Angle sun::noaa::get_sun_elevation(Angle latitude, Angle longitude, date::sys_seconds time_point) {
+    constexpr auto start_of_julian_century = julian_days{2451545.0};
+    const auto j_tp = julian_day(julian_date::sys_to_julian(time_point)) - start_of_julian_century;
+
+    auto date = floor<date::days>(time_point);
+    auto minutes_from_midnight = Angle(julian_days(time_point - date));
+    auto eq_of_time = equation_of_time(j_tp);
+
+    auto angle = longitude + eq_of_time + minutes_from_midnight - Noon;
+    return elevation_from_hour_angle(j_tp, latitude, angle);
 }
 
 optional<sys_seconds> sun::noaa::get_sun_time(Angle latitude, Angle longitude, sys_days date, Angle elevation) {
