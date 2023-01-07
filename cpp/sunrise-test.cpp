@@ -55,8 +55,8 @@ int main() {
     for (auto loc: locations) {
         fmt::print("Zone: {}\n", loc.zone);
         for (auto local_date: dates) {
-            auto lat = loc.latitude;
-            auto lon = loc.longitude;
+            auto lat = Angle::from_deg(loc.latitude);
+            auto lon = Angle::from_deg(loc.longitude);
             auto date = zoned_seconds{loc.zone, local_date};
 
             // To get the correct UTC day for a given local time, we have to add the timezone offset
@@ -64,7 +64,7 @@ int main() {
             auto offset = (date.get_info().offset > 12h) ? date.get_info().offset - 24h : date.get_info().offset;
             auto utc_date = floor<days>(date.get_sys_time() + offset);
 
-            auto times = sun::get_sun_times_noaa(lat, lon, utc_date);
+            auto times = sun::noaa::get_sun_times(lat, lon, utc_date);
             auto times2 = sun::get_sun_times_rust(lat, lon, utc_date);
 
             auto map_zone = [&loc](optional<sys_seconds> tp) -> optional<zoned_seconds> {
@@ -87,12 +87,12 @@ int main() {
         }
     }
 
-    auto lat = 52.02182;
-    auto lon = 8.53509;
+    auto lat = Angle::from_deg(52.02182);
+    auto lon = Angle::from_deg(8.53509);
     auto date = date::zoned_time(date::current_zone(), floor<seconds>(system_clock::now()));
     auto utc_date = floor<days>(date.get_sys_time());
 
-    auto times = sun::get_sun_times_noaa(lat, lon, utc_date);
+    auto times = sun::noaa::get_sun_times(lat, lon, utc_date);
     auto times2 = sun::get_sun_times_rust(lat, lon, utc_date);
 
     auto map_zone = [](optional<sys_seconds> tp) -> optional<zoned_seconds> {

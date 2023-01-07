@@ -8,15 +8,15 @@ using date::days;
 using std::chrono::floor;
 using std::chrono::system_clock;
 
-constexpr double lat = 52.02182;
-constexpr double lon = 8.53509;
+static const auto lat = Angle::from_deg(52.02182);
+static const auto lon = Angle::from_deg(8.53509);
 
 static void BM_sun_times_wiki(benchmark::State &state) {
     // Perform setup here
     auto tp = floor<days>(system_clock::now());
     for (auto _: state) {
         // This code gets timed
-        sun::get_sun_times_wiki(lat, lon, tp);
+        sun::wiki::get_sun_times(lat, lon, tp);
     }
 }
 // Register the function as a benchmark
@@ -38,7 +38,7 @@ static void BM_sun_times_noaa(benchmark::State &state) {
     auto tp = floor<days>(system_clock::now());
     for (auto _: state) {
         // This code gets timed
-        sun::get_sun_times_noaa(lat, lon, tp);
+        sun::noaa::get_sun_times(lat, lon, tp);
     }
 }
 // Register the function as a benchmark
@@ -49,7 +49,7 @@ static void BM_sun_times_noaa_opt(benchmark::State &state) {
     auto tp = floor<days>(system_clock::now());
     for (auto _: state) {
         // This code gets timed
-        sun::get_sun_times_noaa_opt(lat, lon, tp);
+        sun::noaa::get_sun_times_opt(lat, lon, tp);
     }
 }
 // Register the function as a benchmark

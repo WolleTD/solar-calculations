@@ -33,6 +33,10 @@ inline auto operator+(Angle lhs, Angle rhs) -> Angle { return Angle::from_rad(lh
 
 inline auto operator-(Angle lhs, Angle rhs) -> Angle { return Angle::from_rad(lhs.rad() - rhs.rad()); }
 
+inline auto operator==(Angle lhs, Angle rhs) -> bool { return lhs.rad() == rhs.rad(); }
+
+inline auto operator!=(Angle lhs, Angle rhs) -> bool { return !(lhs == rhs); }
+
 static_assert(Angle::from_rad(0).deg() == 0);
 static_assert(Angle::from_deg(90).rad() == M_PI / 2);
 static_assert(Angle::from_rad(M_PI).deg() == 180);

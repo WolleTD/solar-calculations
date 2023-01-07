@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2022-2023 Eicke Herbertz
 
-#include "sun.h"
 #include "angle.h"
 #include "julian_date.h"
+#include "sun.h"
 
 using date::days;
 using date::sys_days;
@@ -14,7 +14,6 @@ using std::optional;
 using std::chrono::ceil;
 using std::chrono::floor;
 using std::chrono::seconds;
-using sun::SunTime;
 
 // This is basically a step-by-step implementation of the calculations described in this Wikipedia article:
 // https://en.wikipedia.org/wiki/Sunrise_equation#Complete_calculation_on_Earth
@@ -25,9 +24,7 @@ static julian_day to_julian_day(date::sys_seconds date) {
     return ceil<days>(julian_date::sys_to_julian(date) - start_of_jul_century + julian_days(0.0008));
 }
 
-static julian_day mean_solar_time(julian_day days, Angle longitude) {
-    return days - julian_days(longitude);
-}
+static julian_day mean_solar_time(julian_day days, Angle longitude) { return days - julian_days(longitude); }
 
 static Angle solar_mean_anomaly(julian_day mean_solar_time) {
     return Angle::from_deg(fmod((357.5291 + 0.98560028 * mean_solar_time.time_since_epoch().count()), 360.0));
@@ -65,7 +62,7 @@ static Angle hour_angle(Angle latitude, Angle declination, Angle time_angle) {
     return Angle::from_rad(copysign(omega, time_angle.rad()));
 }
 
-static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, sys_days date, SunTime type) {
+optional<sys_seconds> sun::wiki::get_sun_time(Angle latitude, Angle longitude, sys_days date, Angle elevation) {
     auto j_day = to_julian_day(date);
     auto mst = mean_solar_time(j_day, longitude);
     auto sma = solar_mean_anomaly(mst);
@@ -76,10 +73,10 @@ static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, sys_d
 
     julian_day result = true_noon;
 
-    if (type == SunTime::Midnight) {
+    if (elevation == SunTime::Midnight) {
         result += julian_days(0.5);
-    } else if (type != SunTime::Noon) {
-        auto hourAngle = hour_angle(latitude, declination, time_angle(type));
+    } else if (elevation != SunTime::Noon) {
+        auto hourAngle = hour_angle(latitude, declination, elevation);
         result += julian_days(hourAngle.deg() / 360.0);
     }
 
@@ -90,9 +87,7 @@ static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, sys_d
     }
 }
 
-auto sun::get_sun_times_wiki(double latitude, double longitude, date::sys_days date) -> sun_times {
-    auto lat = Angle::from_deg(latitude);
-    auto lon = Angle::from_deg(longitude);
+auto sun::wiki::get_sun_times(Angle lat, Angle lon, date::sys_days date) -> sun_times {
     return {
             get_sun_time(lat, lon, date, SunTime::Noon).value(),
             get_sun_time(lat, lon, date, SunTime::Midnight).value(),

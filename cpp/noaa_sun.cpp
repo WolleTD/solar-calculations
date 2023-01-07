@@ -14,7 +14,6 @@ using julian_date::julian_days;
 using std::optional;
 using std::chrono::floor;
 using std::chrono::seconds;
-using sun::SunTime;
 
 Angle sun_geometric_mean_longitude(julian_century tp) {
     auto t = tp.time_since_epoch().count();
@@ -113,7 +112,7 @@ julian_days time_of_solar_elevation(julian_century noon, Angle latitude, Angle l
     return julian_days{Noon - longitude - eq_of_time + angle};
 }
 
-static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, const sys_days date, const SunTime type) {
+optional<sys_seconds> sun::noaa::get_sun_time(Angle latitude, Angle longitude, sys_days date, Angle elevation) {
     // The requested midnight UTC time point in julian days. This is the mathematical baseline for all the
     // hour angles we will calculate. We have to cast to seconds first to keep the midnight part.
     constexpr auto start_of_julian_century = julian_days{2451545.0};
@@ -123,11 +122,11 @@ static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, const
     auto j_noon = j_day + a_noon;
     auto t_noon = date + a_noon;
 
-    if (type == SunTime::Noon) {
+    if (elevation == SunTime::Noon) {
         return floor<seconds>(t_noon);
-    } else if (type == SunTime::Midnight) {
+    } else if (elevation == SunTime::Midnight) {
         return floor<seconds>(t_noon + julian_days(0.5));
-    } else if (auto angle = time_of_solar_elevation(j_noon, latitude, longitude, time_angle(type));
+    } else if (auto angle = time_of_solar_elevation(j_noon, latitude, longitude, elevation);
                !std::isnan(angle.count())) {
         return floor<seconds>(date + angle);
     } else {
@@ -135,9 +134,7 @@ static optional<sys_seconds> get_sun_time(Angle latitude, Angle longitude, const
     }
 }
 
-auto sun::get_sun_times_noaa(double latitude, double longitude, date::sys_days date) -> sun_times {
-    auto lat = Angle::from_deg(latitude);
-    auto lon = Angle::from_deg(longitude);
+auto sun::noaa::get_sun_times(Angle lat, Angle lon, date::sys_days date) -> sun_times {
     return {
             get_sun_time(lat, lon, date, SunTime::Noon).value(),
             get_sun_time(lat, lon, date, SunTime::Midnight).value(),
@@ -152,10 +149,7 @@ auto sun::get_sun_times_noaa(double latitude, double longitude, date::sys_days d
     };
 }
 
-auto sun::get_sun_times_noaa_opt(double latitude, double longitude, date::sys_days date) -> sun_times {
-    auto lat = Angle::from_deg(latitude);
-    auto lon = Angle::from_deg(longitude);
-
+auto sun::noaa::get_sun_times_opt(Angle lat, Angle lon, date::sys_days date) -> sun_times {
     // The requested midnight UTC time point in julian days. This is the mathematical baseline for all the
     // hour angles we will calculate. We have to cast to seconds first to keep the midnight part.
     constexpr auto start_of_julian_century = julian_days{2451545.0};
@@ -170,8 +164,8 @@ auto sun::get_sun_times_noaa_opt(double latitude, double longitude, date::sys_da
     res.noon = floor<seconds>(t_noon);
     res.midnight = floor<seconds>(t_noon + julian_days(0.5));
 
-    auto get_time = [&](SunTime type) -> optional<sys_seconds> {
-        auto angle = time_of_solar_elevation(j_noon, lat, lon, time_angle(type));
+    auto get_time = [&](Angle elevation) -> optional<sys_seconds> {
+        auto angle = time_of_solar_elevation(j_noon, lat, lon, elevation);
         if (!std::isnan(angle.count())) {
             return floor<seconds>(date + angle);
         } else {
@@ -191,9 +185,9 @@ auto sun::get_sun_times_noaa_opt(double latitude, double longitude, date::sys_da
     return res;
 }
 
-auto sun::get_sun_times_rust(double latitude, double longitude, date::sys_days date) -> sun_times {
+auto sun::get_sun_times_rust(Angle latitude, Angle longitude, date::sys_days date) -> sun_times {
     auto tp = sys_seconds(date).time_since_epoch().count();
-    auto res = get_sun_times_r(latitude, longitude, tp);
+    auto res = get_sun_times_r(latitude.deg(), longitude.deg(), tp);
     auto map = [](int64_t tp) -> optional<sys_seconds> {
         if (tp) return sys_seconds(seconds(tp));
         else
